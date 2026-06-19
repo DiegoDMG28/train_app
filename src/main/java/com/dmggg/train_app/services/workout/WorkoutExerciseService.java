@@ -1,0 +1,63 @@
+package com.dmggg.train_app.services.workout;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.dmggg.train_app.dtos.workout.WorkoutExerciseRequest;
+import com.dmggg.train_app.dtos.workout.WorkoutExerciseResponse;
+import com.dmggg.train_app.entities.workout.WorkoutExercise;
+import com.dmggg.train_app.repositories.workout.WorkoutExerciseRepository;
+import com.dmggg.train_app.services.exceptions.EntityNotFound;
+
+@Service
+public class WorkoutExerciseService {
+
+  @Autowired
+  private WorkoutExerciseRepository repository;
+
+  @Transactional(readOnly = true)
+  public List<WorkoutExerciseResponse> searchAll() {
+    List<WorkoutExercise> list = repository.findAll();
+    List<WorkoutExerciseResponse> listResponse = new ArrayList<>();
+    list.forEach(x -> listResponse.add(new WorkoutExerciseResponse(x)));
+    return listResponse;
+  }
+
+  @Transactional(readOnly = true)
+  public WorkoutExerciseResponse searchById(Long id) {
+    Optional<WorkoutExercise> workoutExercise = repository.findById(id);
+    return new WorkoutExerciseResponse(workoutExercise.orElseThrow(()
+        -> new EntityNotFound("WorkoutExercise not found on our database")));
+  }
+
+  @Transactional
+  public WorkoutExerciseResponse insert(WorkoutExerciseRequest workoutExerciseRequest) {
+    WorkoutExercise workoutExercise = new WorkoutExercise();
+    workoutExercise.setMinReps(workoutExerciseRequest.getMinReps());
+    workoutExercise.setMaxReps(workoutExerciseRequest.getMaxReps());
+    workoutExercise = repository.save(workoutExercise);
+    return new WorkoutExerciseResponse(workoutExercise);
+  }
+
+  @Transactional
+  public WorkoutExerciseResponse update(Long id, WorkoutExerciseRequest workoutExerciseRequest) {
+    WorkoutExercise workoutExercise = repository.findById(id)
+        .orElseThrow(() -> new EntityNotFound("WorkoutExercise not found on our database"));
+    workoutExercise.setMinReps(workoutExerciseRequest.getMinReps());
+    workoutExercise.setMaxReps(workoutExerciseRequest.getMaxReps());
+    workoutExercise = repository.save(workoutExercise);
+    return new WorkoutExerciseResponse(workoutExercise);
+  }
+
+  @Transactional
+  public void delete(Long id) {
+    WorkoutExercise workoutExercise = repository.findById(id)
+        .orElseThrow(() -> new EntityNotFound("WorkoutExercise not found on our database"));
+    repository.delete(workoutExercise);
+  }
+}
