@@ -3,7 +3,6 @@ package com.dmggg.train_app.controllers.agroupament;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +18,14 @@ import com.dmggg.train_app.dtos.agroupament.SubAgroupamentRequest;
 import com.dmggg.train_app.dtos.agroupament.SubAgroupamentResponse;
 import com.dmggg.train_app.services.agroupament.SubAgroupamentService;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/subAgroupaments")
 public class SubAgroupamentController {
 
-  @Autowired
-  private SubAgroupamentService service;
+  private final SubAgroupamentService service;
 
   @GetMapping
   public ResponseEntity<List<SubAgroupamentResponse>> searchAll() {

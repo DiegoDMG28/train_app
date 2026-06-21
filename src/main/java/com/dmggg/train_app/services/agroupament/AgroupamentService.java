@@ -1,12 +1,9 @@
 package com.dmggg.train_app.services.agroupament;
 
-import com.dmggg.train_app.repositories.agroupament.SubAgroupamentRepository;
-import com.dmggg.train_app.repositories.exercise.ExerciseRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,20 +13,19 @@ import com.dmggg.train_app.entities.agroupament.Agroupament;
 import com.dmggg.train_app.entities.agroupament.SubAgroupament;
 import com.dmggg.train_app.entities.exercise.Exercise;
 import com.dmggg.train_app.repositories.agroupament.AgroupamentRepository;
+import com.dmggg.train_app.repositories.agroupament.SubAgroupamentRepository;
+import com.dmggg.train_app.repositories.exercise.ExerciseRepository;
 import com.dmggg.train_app.services.exceptions.EntityNotFound;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class AgroupamentService {
 
   private final SubAgroupamentRepository subAgroupamentRepository;
   private final ExerciseRepository exerciseRepository;
-  @Autowired
-  private AgroupamentRepository repository;
-
-  AgroupamentService(ExerciseRepository exerciseRepository, SubAgroupamentRepository subAgroupamentRepository) {
-    this.exerciseRepository = exerciseRepository;
-    this.subAgroupamentRepository = subAgroupamentRepository;
-  }
+  private final AgroupamentRepository repository;
 
   @Transactional(readOnly = true)
   public List<AgroupamentResponse> searchAll() {

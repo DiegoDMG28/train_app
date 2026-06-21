@@ -3,7 +3,6 @@ package com.dmggg.train_app.controllers.exercise;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +18,14 @@ import com.dmggg.train_app.dtos.exercise.ExerciseRequest;
 import com.dmggg.train_app.dtos.exercise.ExerciseResponse;
 import com.dmggg.train_app.services.exercise.ExerciseService;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/exercises")
 public class ExerciseController {
 
-  @Autowired
-  private ExerciseService service;
+  private final ExerciseService service;
 
   @GetMapping
   public ResponseEntity<List<ExerciseResponse>> searchAll() {

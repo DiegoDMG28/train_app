@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,15 +15,15 @@ import com.dmggg.train_app.repositories.workout.WorkoutExerciseRepository;
 import com.dmggg.train_app.repositories.workout.WorkoutRepository;
 import com.dmggg.train_app.services.exceptions.EntityNotFound;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class WorkoutExerciseService {
 
-  @Autowired
-  private WorkoutExerciseRepository repository;
-  @Autowired
-  private ExerciseRepository exerciseRepository;
-  @Autowired
-  private WorkoutRepository workoutRepository;
+  private final WorkoutExerciseRepository repository;
+  private final ExerciseRepository exerciseRepository;
+  private final WorkoutRepository workoutRepository;
 
   @Transactional(readOnly = true)
   public List<WorkoutExerciseResponse> searchAll() {

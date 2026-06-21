@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dmggg.train_app.dtos.agroupament.SubAgroupamentRequest;
 import com.dmggg.train_app.dtos.agroupament.SubAgroupamentResponse;
-import com.dmggg.train_app.dtos.exercise.ExerciseSummaryResponse;
 import com.dmggg.train_app.entities.agroupament.SubAgroupament;
 import com.dmggg.train_app.entities.exercise.Exercise;
 import com.dmggg.train_app.repositories.agroupament.AgroupamentRepository;
@@ -18,17 +16,15 @@ import com.dmggg.train_app.repositories.agroupament.SubAgroupamentRepository;
 import com.dmggg.train_app.repositories.exercise.ExerciseRepository;
 import com.dmggg.train_app.services.exceptions.EntityNotFound;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class SubAgroupamentService {
 
-  @Autowired
-  private SubAgroupamentRepository repository;
-
-  @Autowired
-  private AgroupamentRepository agroupamentRepository;
-
-  @Autowired
-  private ExerciseRepository exerciseRepository;
+  private final SubAgroupamentRepository repository;
+  private final AgroupamentRepository agroupamentRepository;
+  private final ExerciseRepository exerciseRepository;
 
   @Transactional(readOnly = true)
   public List<SubAgroupamentResponse> searchAll() {

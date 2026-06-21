@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,20 +19,16 @@ import com.dmggg.train_app.repositories.exercise.ExerciseRepository;
 import com.dmggg.train_app.repositories.workout.WorkoutExerciseRepository;
 import com.dmggg.train_app.services.exceptions.EntityNotFound;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class ExerciseService {
 
-  @Autowired
-  private ExerciseRepository repository;
-
-  @Autowired
-  private WorkoutExerciseRepository workoutExerciseRepository;
-
-  @Autowired
-  private AgroupamentRepository agroupamentRepository;
-  
-  @Autowired
-  private SubAgroupamentRepository subAgroupamentRepository;
+  private final ExerciseRepository repository;
+  private final WorkoutExerciseRepository workoutExerciseRepository;
+  private final AgroupamentRepository agroupamentRepository;
+  private final SubAgroupamentRepository subAgroupamentRepository;
 
   @Transactional(readOnly = true)
   public List<ExerciseResponse> searchAll() {
@@ -89,7 +84,7 @@ public class ExerciseService {
   public ExerciseResponse update(Long id, ExerciseRequest exerciseRequest) {
     Exercise exercise = repository.findById(id)
         .orElseThrow(() -> new EntityNotFound("Exercise not found on our database"));
-        
+
     exercise.setName(exerciseRequest.getName());
 
     if (exerciseRequest.getWorkoutExercises() != null) {
