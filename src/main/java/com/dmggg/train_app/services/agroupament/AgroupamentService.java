@@ -49,22 +49,22 @@ public class AgroupamentService {
   @Transactional
   public AgroupamentResponse insert(AgroupamentRequest agroupamentRequest) {
     Agroupament agroupament = new Agroupament();
-    List<Exercise> listExercises = new ArrayList<>();
-    List<SubAgroupament> listSubAgroupaments = new ArrayList<>();
 
     agroupament.setName(agroupamentRequest.getName());
 
-    if (!agroupamentRequest.getExercises().isEmpty() && agroupamentRequest.getExercises() != null) {
-      agroupamentRequest.getExercises().forEach(x -> listExercises.add(exerciseRepository.findById(x)
-        .orElseThrow(() -> new EntityNotFound("Exercise not found on our database"))));
-    
+    if (agroupamentRequest.getExercises() != null && !agroupamentRequest.getExercises().isEmpty()) {
+      List<Exercise> listExercises = new ArrayList<>();
+      agroupamentRequest.getExercises().forEach(id ->
+        listExercises.add(exerciseRepository.findById(id)
+          .orElseThrow(() -> new EntityNotFound("Exercise id :" + id + " not found on our database"))));
       agroupament.setListExercises(listExercises);
     }
 
-    if (!agroupamentRequest.getSubAgroupaments().isEmpty() && agroupamentRequest.getSubAgroupaments() != null) {
-      agroupamentRequest.getSubAgroupaments().forEach(x -> listSubAgroupaments.add(subAgroupamentRepository.findById(x)
-        .orElseThrow(() -> new EntityNotFound("SubAgroupament not found on our database"))));
-    
+    if (agroupamentRequest.getSubAgroupaments() != null && !agroupamentRequest.getSubAgroupaments().isEmpty()) {
+      List<SubAgroupament> listSubAgroupaments = new ArrayList<>();
+      agroupamentRequest.getSubAgroupaments().forEach(id ->
+        listSubAgroupaments.add(subAgroupamentRepository.findById(id)
+          .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + id + " not found on our database"))));
       agroupament.setListSubAgroupaments(listSubAgroupaments);
     }
 
