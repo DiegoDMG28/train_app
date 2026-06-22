@@ -18,6 +18,7 @@ import com.dmggg.train_app.dtos.agroupament.AgroupamentRequest;
 import com.dmggg.train_app.dtos.agroupament.AgroupamentResponse;
 import com.dmggg.train_app.services.agroupament.AgroupamentService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class AgroupamentController {
   }
 
   @PostMapping
-  public ResponseEntity<AgroupamentResponse> insert(@RequestBody AgroupamentRequest agroupamentRequest) {
+  public ResponseEntity<AgroupamentResponse> insert(@Valid @RequestBody AgroupamentRequest agroupamentRequest) {
     AgroupamentResponse agroupamentResponse = service.insert(agroupamentRequest);
     URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
         .buildAndExpand(agroupamentResponse.getId()).toUri();
@@ -46,7 +47,7 @@ public class AgroupamentController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<AgroupamentResponse> update(@PathVariable Long id, @RequestBody AgroupamentRequest agroupamentRequest) {
+  public ResponseEntity<AgroupamentResponse> update(@PathVariable Long id, @Valid @RequestBody AgroupamentRequest agroupamentRequest) {
     return ResponseEntity.ok().body(service.update(id, agroupamentRequest));
   }
 

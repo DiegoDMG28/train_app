@@ -3,6 +3,7 @@ import java.util.List;
 
 import com.dmggg.train_app.entities.exercise.Exercise;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +21,10 @@ public class Agroupament {
   private long id;
   private String name;
 
-  @OneToMany(mappedBy = "agroupament")
+  @OneToMany(
+    mappedBy = "agroupament",
+    cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+  )
   private List<SubAgroupament> listSubAgroupaments;
 
   @ManyToMany(mappedBy = "listAgroupaments")

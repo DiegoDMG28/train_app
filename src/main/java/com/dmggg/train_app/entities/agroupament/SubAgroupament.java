@@ -20,10 +20,11 @@ public class SubAgroupament {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
+
   private String name;
 
-  @ManyToOne
-  @JoinColumn(name = "agroupament_id")
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "agroupament_id", nullable = false)
   private Agroupament agroupament;
 
   @ManyToMany(mappedBy = "listSubAgroupaments")

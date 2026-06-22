@@ -20,12 +20,12 @@ public class WorkoutExercise {
   private int minReps;
   private int maxReps;
 
-  @ManyToOne
-  @JoinColumn(name = "exercise_id")
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "exercise_id", nullable = false)
   private Exercise exercise;
 
-  @ManyToOne
-  @JoinColumn(name = "workout_id")
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "workout_id", nullable = false)
   private Workout workout;
 
 

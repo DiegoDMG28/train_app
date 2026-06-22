@@ -3,6 +3,7 @@ package com.dmggg.train_app.entities.workout;
 import java.time.Instant;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +21,11 @@ public class Workout {
   private String name;
   private Instant instant;
 
-  @OneToMany(mappedBy = "workout")
+  @OneToMany(
+    mappedBy = "workout",
+    cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+    orphanRemoval = true
+  )
   private List<WorkoutExercise> listWorkoutExercises;
 
   public Workout() {

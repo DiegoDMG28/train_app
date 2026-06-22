@@ -3,10 +3,17 @@ package com.dmggg.train_app.dtos.agroupament;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class SubAgroupamentRequest {
+  @NotBlank(message = "Name is required")
   private String name;
-  private Long agroupament;
+
   private List<Long> exercises = new ArrayList<>();
+
+  @NotNull(message = "Agroupament is required")
+  private Long agroupament;
 
   public SubAgroupamentRequest() {
   }

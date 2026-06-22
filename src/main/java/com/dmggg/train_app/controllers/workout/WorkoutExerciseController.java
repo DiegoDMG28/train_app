@@ -18,6 +18,7 @@ import com.dmggg.train_app.dtos.workout.WorkoutExerciseRequest;
 import com.dmggg.train_app.dtos.workout.WorkoutExerciseResponse;
 import com.dmggg.train_app.services.workout.WorkoutExerciseService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class WorkoutExerciseController {
   }
 
   @PostMapping
-  public ResponseEntity<WorkoutExerciseResponse> insert(@RequestBody WorkoutExerciseRequest workoutExerciseRequest) {
+  public ResponseEntity<WorkoutExerciseResponse> insert(@Valid @RequestBody WorkoutExerciseRequest workoutExerciseRequest) {
     WorkoutExerciseResponse workoutExerciseResponse = service.insert(workoutExerciseRequest);
     URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
         .buildAndExpand(workoutExerciseResponse.getId()).toUri();
@@ -46,7 +47,7 @@ public class WorkoutExerciseController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<WorkoutExerciseResponse> update(@PathVariable Long id, @RequestBody WorkoutExerciseRequest workoutExerciseRequest) {
+  public ResponseEntity<WorkoutExerciseResponse> update(@PathVariable Long id, @Valid @RequestBody WorkoutExerciseRequest workoutExerciseRequest) {
     return ResponseEntity.ok().body(service.update(id, workoutExerciseRequest));
   }
 

@@ -73,7 +73,33 @@ public class AgroupamentService {
   public AgroupamentResponse update(Long id, AgroupamentRequest agroupamentRequest) {
     Agroupament agroupament = repository.findById(id)
         .orElseThrow(() -> new EntityNotFound("Agroupament not found on our database"));
+
     agroupament.setName(agroupamentRequest.getName());
+
+    if (agroupamentRequest.getSubAgroupaments() != null) {
+      List<SubAgroupament> listSubAgroupaments = new ArrayList<>();
+    
+      agroupamentRequest.getSubAgroupaments().forEach(x ->
+        listSubAgroupaments.add(subAgroupamentRepository.findById(x)
+          .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + x + " not found on our database"))));
+    
+      
+      agroupament.getListSubAgroupaments().clear();
+      agroupament.getListSubAgroupaments().addAll(listSubAgroupaments);
+    }
+
+    if (agroupamentRequest.getExercises() != null) {
+      List<Exercise> listExercises = new ArrayList<>();
+    
+      agroupamentRequest.getExercises().forEach(x ->
+        listExercises.add(exerciseRepository.findById(x)
+          .orElseThrow(() -> new EntityNotFound("Exercise id :" + x + " not found on our database"))));
+    
+      agroupament.getListExercises().clear();
+      agroupament.getListExercises().addAll(listExercises);
+    }
+
+
     agroupament = repository.save(agroupament);
     return new AgroupamentResponse(agroupament);
   }

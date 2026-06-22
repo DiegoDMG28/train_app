@@ -1,8 +1,20 @@
 package com.dmggg.train_app.dtos.workout;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public class WorkoutExerciseRequest {
+
+  @Min(value = 1, message = "Min Reps must be at least 1")
   private int minReps;
+
+  @Min(value = 2, message = "Max Reps must be at least 2")
   private int maxReps;
+
+  @NotNull(message = "Exercise is required")
   private Long exercise;
+  
+  @NotNull(message = "Workout is required")
   private Long workout;
 
   public WorkoutExerciseRequest() {

@@ -6,6 +6,7 @@ import com.dmggg.train_app.entities.agroupament.Agroupament;
 import com.dmggg.train_app.entities.agroupament.SubAgroupament;
 import com.dmggg.train_app.entities.workout.WorkoutExercise;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +26,11 @@ public class Exercise {
   private long id;
   private String name;
 
-  @OneToMany(mappedBy = "exercise")
+  @OneToMany(
+    mappedBy = "exercise",
+    cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+    orphanRemoval = true
+  )
   private List<WorkoutExercise> listWorkoutExercises;
 
   @ManyToMany
