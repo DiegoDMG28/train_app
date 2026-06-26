@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import com.dmggg.train_app.entities.workout.Workout;
 import com.dmggg.train_app.entities.workout.WorkoutExercise;
 import com.dmggg.train_app.repositories.workout.WorkoutExerciseRepository;
 import com.dmggg.train_app.repositories.workout.WorkoutRepository;
+import com.dmggg.train_app.services.exceptions.DatabaseException;
 import com.dmggg.train_app.services.exceptions.EntityNotFound;
 
 import lombok.RequiredArgsConstructor;
@@ -49,7 +51,7 @@ public class WorkoutService {
 
       workoutRequest.getWorkoutExercises().forEach(id -> {
         WorkoutExercise workoutExercise = workoutExerciseRepository.findById(id)
-          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + id + " not found on our database"));
+            .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + id + " not found on our database"));
         workoutExercise.setWorkout(saved);
         workoutExerciseRepository.save(workoutExercise);
       });
@@ -78,7 +80,7 @@ public class WorkoutService {
 
       workoutRequest.getWorkoutExercises().forEach(x -> {
         WorkoutExercise workoutExercise = workoutExerciseRepository.findById(x)
-          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + x + " not found on our database"));
+            .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + x + " not found on our database"));
         if (!workout.getListWorkoutExercises().contains(workoutExercise)) {
           workoutExercise.setWorkout(workout);
           workoutExerciseRepository.save(workoutExercise);
@@ -92,14 +94,22 @@ public class WorkoutService {
 
   @Transactional
   public void delete(Long id) {
-    Workout workout = repository.findById(id)
-        .orElseThrow(() -> new EntityNotFound("Workout not found on our database"));
+    if (!repository.existsById(id)) {
+      throw new EntityNotFound("Workout not found on our database");
+    }
+    try {
+      Workout workout = repository.findById(id)
+          .orElseThrow(() -> new EntityNotFound("Workout not found on our database"));
 
-    new ArrayList<>(workout.getListWorkoutExercises()).forEach(x -> {
-      x.setWorkout(null);
-      workoutExerciseRepository.save(x);
-    });
+      new ArrayList<>(workout.getListWorkoutExercises()).forEach(x -> {
+        x.setWorkout(null);
+        workoutExerciseRepository.save(x);
+      });
 
-    repository.delete(workout);
+      repository.delete(workout);
+    } catch (DataIntegrityViolationException e) {
+      throw new DatabaseException("Integrity violation");
+    }
+
   }
 }

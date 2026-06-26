@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import com.dmggg.train_app.entities.exercise.Exercise;
 import com.dmggg.train_app.repositories.agroupament.AgroupamentRepository;
 import com.dmggg.train_app.repositories.agroupament.SubAgroupamentRepository;
 import com.dmggg.train_app.repositories.exercise.ExerciseRepository;
+import com.dmggg.train_app.services.exceptions.DatabaseException;
 import com.dmggg.train_app.services.exceptions.EntityNotFound;
 
 import lombok.RequiredArgsConstructor;
@@ -37,8 +39,8 @@ public class SubAgroupamentService {
   @Transactional(readOnly = true)
   public SubAgroupamentResponse searchById(Long id) {
     Optional<SubAgroupament> subAgroupament = repository.findById(id);
-    return new SubAgroupamentResponse(subAgroupament.orElseThrow(()
-        -> new EntityNotFound("SubAgroupament not found on our database")));
+    return new SubAgroupamentResponse(
+        subAgroupament.orElseThrow(() -> new EntityNotFound("SubAgroupament not found on our database")));
   }
 
   @Transactional
@@ -49,7 +51,7 @@ public class SubAgroupamentService {
 
     if (subAgroupamentRequest.getAgroupament() != null) {
       subAgroupament.setAgroupament(agroupamentRepository.findById(subAgroupamentRequest.getAgroupament())
-        .orElseThrow(() -> new EntityNotFound("Agroupament not found on our database")));
+          .orElseThrow(() -> new EntityNotFound("Agroupament not found on our database")));
     }
 
     if (subAgroupamentRequest.getExercises() != null && !subAgroupamentRequest.getExercises().isEmpty()) {
@@ -58,8 +60,8 @@ public class SubAgroupamentService {
       SubAgroupament finalSubAgroupament = subAgroupament;
       subAgroupamentRequest.getExercises().forEach(id -> {
         Exercise exercise = exerciseRepository.findById(id)
-          .orElseThrow(() -> new EntityNotFound("Exercise id :" + id + " not found on our database"));
-        exercise.getListSubAgroupaments().add(finalSubAgroupament); 
+            .orElseThrow(() -> new EntityNotFound("Exercise id :" + id + " not found on our database"));
+        exercise.getListSubAgroupaments().add(finalSubAgroupament);
         exerciseRepository.save(exercise);
       });
     }
@@ -71,13 +73,13 @@ public class SubAgroupamentService {
   @Transactional
   public SubAgroupamentResponse update(Long id, SubAgroupamentRequest subAgroupamentRequest) {
     SubAgroupament subAgroupament = repository.findById(id)
-      .orElseThrow(() -> new EntityNotFound("SubAgroupament not found on our database"));
+        .orElseThrow(() -> new EntityNotFound("SubAgroupament not found on our database"));
 
     subAgroupament.setName(subAgroupamentRequest.getName());
 
     if (subAgroupamentRequest.getAgroupament() != null) {
       subAgroupament.setAgroupament(agroupamentRepository.findById(subAgroupamentRequest.getAgroupament())
-        .orElseThrow(() -> new EntityNotFound("Agroupament not found on our database")));
+          .orElseThrow(() -> new EntityNotFound("Agroupament not found on our database")));
     }
 
     if (subAgroupamentRequest.getExercises() != null) {
@@ -92,7 +94,7 @@ public class SubAgroupamentService {
 
       subAgroupamentRequest.getExercises().forEach(x -> {
         Exercise exercise = exerciseRepository.findById(x)
-          .orElseThrow(() -> new EntityNotFound("Exercise id :" + x + " not found on our database"));
+            .orElseThrow(() -> new EntityNotFound("Exercise id :" + x + " not found on our database"));
         if (!exercise.getListSubAgroupaments().contains(finalSubAgroupament)) {
           exercise.getListSubAgroupaments().add(finalSubAgroupament);
           exerciseRepository.save(exercise);
@@ -106,14 +108,24 @@ public class SubAgroupamentService {
 
   @Transactional
   public void delete(Long id) {
-    SubAgroupament subAgroupament = repository.findById(id)
-        .orElseThrow(() -> new EntityNotFound("SubAgroupament not found on our database"));
+    if (!repository.existsById(id)) {
+      throw new EntityNotFound("SubAgroupament not found on our database");
+    }
 
-    new ArrayList<>(subAgroupament.getListExercises()).forEach(x -> {
-      x.getListSubAgroupaments().remove(subAgroupament);
-      exerciseRepository.save(x);
-    });
+    try {
 
-    repository.delete(subAgroupament);
+      SubAgroupament subAgroupament = repository.findById(id)
+          .orElseThrow(() -> new EntityNotFound("SubAgroupament not found on our database"));
+
+      new ArrayList<>(subAgroupament.getListExercises()).forEach(x -> {
+        x.getListSubAgroupaments().remove(subAgroupament);
+        exerciseRepository.save(x);
+      });
+
+      repository.delete(subAgroupament);
+
+    } catch (DataIntegrityViolationException e) {
+      throw new DatabaseException("Integrity violation");
+    }
   }
 }

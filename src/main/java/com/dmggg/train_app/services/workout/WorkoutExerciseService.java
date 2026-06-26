@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import com.dmggg.train_app.entities.workout.WorkoutExercise;
 import com.dmggg.train_app.repositories.exercise.ExerciseRepository;
 import com.dmggg.train_app.repositories.workout.WorkoutExerciseRepository;
 import com.dmggg.train_app.repositories.workout.WorkoutRepository;
+import com.dmggg.train_app.services.exceptions.DatabaseException;
 import com.dmggg.train_app.services.exceptions.EntityNotFound;
 
 import lombok.RequiredArgsConstructor;
@@ -85,8 +87,17 @@ public class WorkoutExerciseService {
 
   @Transactional
   public void delete(Long id) {
-    WorkoutExercise workoutExercise = repository.findById(id)
+    if (!repository.existsById(id)) {
+      throw new EntityNotFound("WorkoutExercise not found on our database");
+    }
+    try{
+      WorkoutExercise workoutExercise = repository.findById(id)
         .orElseThrow(() -> new EntityNotFound("WorkoutExercise not found on our database"));
-    repository.delete(workoutExercise);
+
+      repository.delete(workoutExercise);
+    }
+    catch(DataIntegrityViolationException e){
+      throw new DatabaseException("Integrity violation");
+    }
   }
 }

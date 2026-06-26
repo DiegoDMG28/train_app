@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import com.dmggg.train_app.repositories.agroupament.AgroupamentRepository;
 import com.dmggg.train_app.repositories.agroupament.SubAgroupamentRepository;
 import com.dmggg.train_app.repositories.exercise.ExerciseRepository;
 import com.dmggg.train_app.repositories.workout.WorkoutExerciseRepository;
+import com.dmggg.train_app.services.exceptions.DatabaseException;
 import com.dmggg.train_app.services.exceptions.EntityNotFound;
 
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class ExerciseService {
   @Transactional(readOnly = true)
   public ExerciseResponse searchById(Long id) {
     Optional<Exercise> exercise = repository.findById(id);
-    return new ExerciseResponse(exercise.orElseThrow(()
-        -> new EntityNotFound("Exercise not found on our database")));
+    return new ExerciseResponse(exercise.orElseThrow(() -> new EntityNotFound("Exercise not found on our database")));
   }
 
   @Transactional
@@ -54,7 +55,7 @@ public class ExerciseService {
     if (exerciseRequest.getWorkoutExercises() != null && !exerciseRequest.getWorkoutExercises().isEmpty()) {
       exerciseRequest.getWorkoutExercises().forEach(id -> {
         WorkoutExercise workoutExercise = workoutExerciseRepository.findById(id)
-          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + id + " not found on our database"));
+            .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + id + " not found on our database"));
         workoutExercise.setExercise(exercise);
         workoutExerciseRepository.save(workoutExercise);
       });
@@ -63,7 +64,7 @@ public class ExerciseService {
     if (exerciseRequest.getAgroupaments() != null && !exerciseRequest.getAgroupaments().isEmpty()) {
       exerciseRequest.getAgroupaments().forEach(id -> {
         Agroupament agroupament = agroupamentRepository.findById(id)
-          .orElseThrow(() -> new EntityNotFound("Agroupament id :" + id + " not found on our database"));
+            .orElseThrow(() -> new EntityNotFound("Agroupament id :" + id + " not found on our database"));
         exercise.getListAgroupaments().add(agroupament);
       });
     }
@@ -71,7 +72,7 @@ public class ExerciseService {
     if (exerciseRequest.getSubAgroupaments() != null && !exerciseRequest.getSubAgroupaments().isEmpty()) {
       exerciseRequest.getSubAgroupaments().forEach(id -> {
         SubAgroupament subAgroupament = subAgroupamentRepository.findById(id)
-          .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + id + " not found on our database"));
+            .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + id + " not found on our database"));
         exercise.getListSubAgroupaments().add(subAgroupament);
       });
     }
@@ -97,7 +98,7 @@ public class ExerciseService {
 
       exerciseRequest.getWorkoutExercises().forEach(x -> {
         WorkoutExercise workoutExercise = workoutExerciseRepository.findById(x)
-          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + x + " not found on our database"));
+            .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + x + " not found on our database"));
         if (!exercise.getListWorkoutExercises().contains(workoutExercise)) {
           workoutExercise.setExercise(exercise);
           workoutExerciseRepository.save(workoutExercise);
@@ -114,7 +115,7 @@ public class ExerciseService {
 
       exerciseRequest.getAgroupaments().forEach(x -> {
         Agroupament agroupament = agroupamentRepository.findById(x)
-          .orElseThrow(() -> new EntityNotFound("Agroupament id :" + x + " not found on our database"));
+            .orElseThrow(() -> new EntityNotFound("Agroupament id :" + x + " not found on our database"));
         if (!exercise.getListAgroupaments().contains(agroupament)) {
           exercise.getListAgroupaments().add(agroupament);
         }
@@ -130,9 +131,9 @@ public class ExerciseService {
 
       exerciseRequest.getSubAgroupaments().forEach(x -> {
         SubAgroupament subAgroupament = subAgroupamentRepository.findById(x)
-          .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + x + " not found on our database"));
+            .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + x + " not found on our database"));
         if (!exercise.getListSubAgroupaments().contains(subAgroupament)) {
-          exercise.getListSubAgroupaments().add(subAgroupament); 
+          exercise.getListSubAgroupaments().add(subAgroupament);
         }
       });
     }
@@ -143,17 +144,28 @@ public class ExerciseService {
 
   @Transactional
   public void delete(Long id) {
-    Exercise exercise = repository.findById(id)
-        .orElseThrow(() -> new EntityNotFound("Exercise not found on our database"));
-        
-    new ArrayList<>(exercise.getListWorkoutExercises()).forEach(x -> {
-      x.setExercise(null);
-      workoutExerciseRepository.save(x);
-    });
+    if (!repository.existsById(id)) {
+      throw new EntityNotFound("Exercise not found on our database");
+    }
 
-    exercise.getListAgroupaments().clear();
-    exercise.getListSubAgroupaments().clear();
+    try {
 
-    repository.delete(exercise);
+      Exercise exercise = repository.findById(id)
+          .orElseThrow(() -> new EntityNotFound("Exercise not found on our database"));
+
+      new ArrayList<>(exercise.getListWorkoutExercises()).forEach(x -> {
+        x.setExercise(null);
+        workoutExerciseRepository.save(x);
+      });
+
+      exercise.getListAgroupaments().clear();
+      exercise.getListSubAgroupaments().clear();
+
+      repository.delete(exercise);
+
+    } catch (DataIntegrityViolationException e) {
+      throw new DatabaseException("Integrity violation");
+    }
+
   }
 }
