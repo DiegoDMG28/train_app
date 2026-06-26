@@ -52,32 +52,32 @@ public class ExerciseService {
     exercise.setName(exerciseRequest.getName());
 
     if (exerciseRequest.getWorkoutExercises() != null && !exerciseRequest.getWorkoutExercises().isEmpty()) {
-      List<WorkoutExercise> listWorkoutExercises = new ArrayList<>();
-      exerciseRequest.getWorkoutExercises().forEach(id ->
-        listWorkoutExercises.add(workoutExerciseRepository.findById(id)
-          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + id + " not found on our database"))));
-
-      exercise.setListWorkoutExercises(listWorkoutExercises);
+      exerciseRequest.getWorkoutExercises().forEach(id -> {
+        WorkoutExercise workoutExercise = workoutExerciseRepository.findById(id)
+          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + id + " not found on our database"));
+        workoutExercise.setExercise(exercise);
+        workoutExerciseRepository.save(workoutExercise);
+      });
     }
 
     if (exerciseRequest.getAgroupaments() != null && !exerciseRequest.getAgroupaments().isEmpty()) {
-      List<Agroupament> listAgroupaments = new ArrayList<>();
-      exerciseRequest.getAgroupaments().forEach(id ->
-        listAgroupaments.add(agroupamentRepository.findById(id)
-          .orElseThrow(() -> new EntityNotFound("Agroupament id :" + id + " not found on our database"))));
-      exercise.setListAgroupaments(listAgroupaments);
+      exerciseRequest.getAgroupaments().forEach(id -> {
+        Agroupament agroupament = agroupamentRepository.findById(id)
+          .orElseThrow(() -> new EntityNotFound("Agroupament id :" + id + " not found on our database"));
+        exercise.getListAgroupaments().add(agroupament);
+      });
     }
 
     if (exerciseRequest.getSubAgroupaments() != null && !exerciseRequest.getSubAgroupaments().isEmpty()) {
-      List<SubAgroupament> listSubAgroupaments = new ArrayList<>();
-      exerciseRequest.getSubAgroupaments().forEach(id ->
-        listSubAgroupaments.add(subAgroupamentRepository.findById(id)
-          .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + id + " not found on our database"))));
-      exercise.setListSubAgroupaments(listSubAgroupaments);
+      exerciseRequest.getSubAgroupaments().forEach(id -> {
+        SubAgroupament subAgroupament = subAgroupamentRepository.findById(id)
+          .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + id + " not found on our database"));
+        exercise.getListSubAgroupaments().add(subAgroupament);
+      });
     }
 
-    exercise = repository.save(exercise);
-    return new ExerciseResponse(exercise);
+    Exercise saved = repository.save(exercise);
+    return new ExerciseResponse(saved);
   }
 
   @Transactional
@@ -88,46 +88,72 @@ public class ExerciseService {
     exercise.setName(exerciseRequest.getName());
 
     if (exerciseRequest.getWorkoutExercises() != null) {
-      List<WorkoutExercise> listWorkoutExercises = new ArrayList<>();
-      exerciseRequest.getWorkoutExercises().forEach(x ->
-        listWorkoutExercises.add(workoutExerciseRepository.findById(x)
-          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + x + " not found on our database"))));
+      new ArrayList<>(exercise.getListWorkoutExercises()).forEach(x -> {
+        if (!exerciseRequest.getWorkoutExercises().contains(x.getId())) {
+          x.setExercise(null);
+          workoutExerciseRepository.save(x);
+        }
+      });
 
-      exercise.getListWorkoutExercises().clear();
-      exercise.getListWorkoutExercises().addAll(listWorkoutExercises);
-      exercise.setListWorkoutExercises(listWorkoutExercises);
+      exerciseRequest.getWorkoutExercises().forEach(x -> {
+        WorkoutExercise workoutExercise = workoutExerciseRepository.findById(x)
+          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + x + " not found on our database"));
+        if (!exercise.getListWorkoutExercises().contains(workoutExercise)) {
+          workoutExercise.setExercise(exercise);
+          workoutExerciseRepository.save(workoutExercise);
+        }
+      });
     }
 
     if (exerciseRequest.getAgroupaments() != null) {
-      List<Agroupament> listAgroupaments = new ArrayList<>();
-      exerciseRequest.getAgroupaments().forEach(x ->
-        listAgroupaments.add(agroupamentRepository.findById(x)
-          .orElseThrow(() -> new EntityNotFound("Agroupament id :" + x + " not found on our database"))));
+      new ArrayList<>(exercise.getListAgroupaments()).forEach(x -> {
+        if (!exerciseRequest.getAgroupaments().contains(x.getId())) {
+          exercise.getListAgroupaments().remove(x);
+        }
+      });
 
-      exercise.getListAgroupaments().clear();
-      exercise.getListAgroupaments().addAll(listAgroupaments);
-      exercise.setListAgroupaments(listAgroupaments);
+      exerciseRequest.getAgroupaments().forEach(x -> {
+        Agroupament agroupament = agroupamentRepository.findById(x)
+          .orElseThrow(() -> new EntityNotFound("Agroupament id :" + x + " not found on our database"));
+        if (!exercise.getListAgroupaments().contains(agroupament)) {
+          exercise.getListAgroupaments().add(agroupament);
+        }
+      });
     }
 
     if (exerciseRequest.getSubAgroupaments() != null) {
-      List<SubAgroupament> listSubAgroupaments = new ArrayList<>();
-      exerciseRequest.getSubAgroupaments().forEach(x ->
-        listSubAgroupaments.add(subAgroupamentRepository.findById(x)
-          .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + x + " not found on our database"))));
+      new ArrayList<>(exercise.getListSubAgroupaments()).forEach(x -> {
+        if (!exerciseRequest.getSubAgroupaments().contains(x.getId())) {
+          exercise.getListSubAgroupaments().remove(x);
+        }
+      });
 
-      exercise.getListSubAgroupaments().clear();
-      exercise.getListSubAgroupaments().addAll(listSubAgroupaments);
-      exercise.setListSubAgroupaments(listSubAgroupaments);
+      exerciseRequest.getSubAgroupaments().forEach(x -> {
+        SubAgroupament subAgroupament = subAgroupamentRepository.findById(x)
+          .orElseThrow(() -> new EntityNotFound("SubAgroupament id :" + x + " not found on our database"));
+        if (!exercise.getListSubAgroupaments().contains(subAgroupament)) {
+          exercise.getListSubAgroupaments().add(subAgroupament); 
+        }
+      });
     }
 
-    exercise = repository.save(exercise);
-    return new ExerciseResponse(exercise);
+    Exercise updated = repository.save(exercise);
+    return new ExerciseResponse(updated);
   }
 
   @Transactional
   public void delete(Long id) {
     Exercise exercise = repository.findById(id)
         .orElseThrow(() -> new EntityNotFound("Exercise not found on our database"));
+        
+    new ArrayList<>(exercise.getListWorkoutExercises()).forEach(x -> {
+      x.setExercise(null);
+      workoutExerciseRepository.save(x);
+    });
+
+    exercise.getListAgroupaments().clear();
+    exercise.getListSubAgroupaments().clear();
+
     repository.delete(exercise);
   }
 }

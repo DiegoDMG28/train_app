@@ -45,30 +45,61 @@ public class WorkoutService {
     workout.setName(workoutRequest.getName());
 
     if (workoutRequest.getWorkoutExercises() != null && !workoutRequest.getWorkoutExercises().isEmpty()) {
-      List<WorkoutExercise> listWorkoutExercises = new ArrayList<>();
-      workoutRequest.getWorkoutExercises().forEach(id ->
-        listWorkoutExercises.add(workoutExerciseRepository.findById(id)
-          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + id + " not found on our database"))));
-      workout.setListWorkoutExercises(listWorkoutExercises);
+      Workout saved = repository.save(workout);
+
+      workoutRequest.getWorkoutExercises().forEach(id -> {
+        WorkoutExercise workoutExercise = workoutExerciseRepository.findById(id)
+          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + id + " not found on our database"));
+        workoutExercise.setWorkout(saved);
+        workoutExerciseRepository.save(workoutExercise);
+      });
+
+      return new WorkoutResponse(saved);
     }
 
-    workout = repository.save(workout);
-    return new WorkoutResponse(workout);
+    Workout saved = repository.save(workout);
+    return new WorkoutResponse(saved);
   }
 
   @Transactional
   public WorkoutResponse update(Long id, WorkoutRequest workoutRequest) {
     Workout workout = repository.findById(id)
         .orElseThrow(() -> new EntityNotFound("Workout not found on our database"));
+
     workout.setName(workoutRequest.getName());
-    workout = repository.save(workout);
-    return new WorkoutResponse(workout);
+
+    if (workoutRequest.getWorkoutExercises() != null) {
+      new ArrayList<>(workout.getListWorkoutExercises()).forEach(x -> {
+        if (!workoutRequest.getWorkoutExercises().contains(x.getId())) {
+          x.setWorkout(null);
+          workoutExerciseRepository.save(x);
+        }
+      });
+
+      workoutRequest.getWorkoutExercises().forEach(x -> {
+        WorkoutExercise workoutExercise = workoutExerciseRepository.findById(x)
+          .orElseThrow(() -> new EntityNotFound("WorkoutExercise id :" + x + " not found on our database"));
+        if (!workout.getListWorkoutExercises().contains(workoutExercise)) {
+          workoutExercise.setWorkout(workout);
+          workoutExerciseRepository.save(workoutExercise);
+        }
+      });
+    }
+
+    Workout updated = repository.save(workout);
+    return new WorkoutResponse(updated);
   }
 
   @Transactional
   public void delete(Long id) {
     Workout workout = repository.findById(id)
         .orElseThrow(() -> new EntityNotFound("Workout not found on our database"));
+
+    new ArrayList<>(workout.getListWorkoutExercises()).forEach(x -> {
+      x.setWorkout(null);
+      workoutExerciseRepository.save(x);
+    });
+
     repository.delete(workout);
   }
 }
