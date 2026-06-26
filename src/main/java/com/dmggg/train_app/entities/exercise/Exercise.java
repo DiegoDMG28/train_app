@@ -1,5 +1,6 @@
 package com.dmggg.train_app.entities.exercise;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dmggg.train_app.entities.agroupament.Agroupament;
@@ -31,19 +32,19 @@ public class Exercise {
     cascade = {CascadeType.PERSIST, CascadeType.MERGE},
     orphanRemoval = true
   )
-  private List<WorkoutExercise> listWorkoutExercises;
+  private List<WorkoutExercise> listWorkoutExercises = new ArrayList<>();
 
   @ManyToMany
   @JoinTable(name = "tb_exercise_sub_agroupament", 
     joinColumns = @JoinColumn(name = "exercise_id"), 
     inverseJoinColumns = @JoinColumn(name = "sub_agroupament_id"))
-  private List<SubAgroupament> listSubAgroupaments;
+  private List<SubAgroupament> listSubAgroupaments = new ArrayList<>();
 
   @ManyToMany
   @JoinTable(name = "tb_exercise_agroupament", 
     joinColumns = @JoinColumn(name = "exercise_id"), 
     inverseJoinColumns = @JoinColumn(name = "agroupament_id"))
-  private List<Agroupament> listAgroupaments;
+  private List<Agroupament> listAgroupaments = new ArrayList<>();
 
   public Exercise() {
   }

@@ -1,0 +1,356 @@
+{
+	"info": {
+		"_postman_id": "635ad786-b4a1-4d14-84e0-888baacafd02",
+		"name": "train_app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "38436971"
+	},
+	"item": [
+		{
+			"name": "Agroupament",
+			"item": [
+				{
+					"name": "searchAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/agroupaments"
+					},
+					"response": []
+				},
+				{
+					"name": "searchById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/agroupaments/1"
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Peito\"\n}"
+						},
+						"url": "{{baseUrl}}/agroupaments"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Peito\",\n  \"subAgroupaments\": []\n}"
+						},
+						"url": "{{baseUrl}}/agroupaments/1"
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{baseUrl}}/agroupaments/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SubAgroupament",
+			"item": [
+				{
+					"name": "searchAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/subAgroupaments"
+					},
+					"response": []
+				},
+				{
+					"name": "searchById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/subAgroupaments/1"
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Peitoral Inferior\",\n  \"agroupament\": 1\n}"
+						},
+						"url": "{{baseUrl}}/subAgroupaments"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Chest Updated\",\n  \"exercises\": []\n}"
+						},
+						"url": "{{baseUrl}}/subAgroupaments/1"
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{baseUrl}}/subAgroupaments/3"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Exercise",
+			"item": [
+				{
+					"name": "searchAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/exercises"
+					},
+					"response": []
+				},
+				{
+					"name": "searchById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/exercises/1"
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Crucifixo maquina\",\n  \"agroupaments\" : [1],\n  \"subAgroupaments\":[1,2,4]\n}"
+						},
+						"url": "{{baseUrl}}/exercises"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Crucifixo maquina\",\n  \"agroupaments\": [1],\n  \"subAgroupaments\" : [1,2, 4]\n}"
+						},
+						"url": "{{baseUrl}}/exercises/1"
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{baseUrl}}/exercises/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Workout",
+			"item": [
+				{
+					"name": "searchAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/workouts"
+					},
+					"response": []
+				},
+				{
+					"name": "searchById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/workouts/1"
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Planilha A\"\n}"
+						},
+						"url": "{{baseUrl}}/workouts"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Planilha A\"\n}"
+						},
+						"url": "{{baseUrl}}/workouts/1"
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{baseUrl}}/workouts/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WorkoutExercise",
+			"item": [
+				{
+					"name": "searchAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/workoutExercises"
+					},
+					"response": []
+				},
+				{
+					"name": "searchById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/workoutExercises/1"
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"minReps\": 5,\n  \"maxReps\": 9,\n  \"exercise\": 2,\n  \"workout\": 2\n}"
+						},
+						"url": "{{baseUrl}}/workoutExercises"
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"minReps\": 6,\n  \"maxReps\": 10\n}"
+						},
+						"url": "{{baseUrl}}/workoutExercises/1"
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{baseUrl}}/workoutExercises/1"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		}
+	]
+}

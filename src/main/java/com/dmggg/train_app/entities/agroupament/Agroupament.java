@@ -1,4 +1,5 @@
 package com.dmggg.train_app.entities.agroupament;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dmggg.train_app.entities.exercise.Exercise;
@@ -25,10 +26,10 @@ public class Agroupament {
     mappedBy = "agroupament",
     cascade = {CascadeType.PERSIST, CascadeType.MERGE}
   )
-  private List<SubAgroupament> listSubAgroupaments;
+  private List<SubAgroupament> listSubAgroupaments = new ArrayList<>();
 
   @ManyToMany(mappedBy = "listAgroupaments")
-  private List<Exercise> listExercises;
+  private List<Exercise> listExercises = new ArrayList<>();
 
   public Agroupament() {
   }

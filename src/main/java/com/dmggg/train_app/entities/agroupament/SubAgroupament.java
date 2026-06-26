@@ -1,5 +1,6 @@
 package com.dmggg.train_app.entities.agroupament;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dmggg.train_app.entities.exercise.Exercise;
@@ -28,7 +29,7 @@ public class SubAgroupament {
   private Agroupament agroupament;
 
   @ManyToMany(mappedBy = "listSubAgroupaments")
-  private List<Exercise> listExercises;
+  private List<Exercise> listExercises = new ArrayList<>();
 
   public SubAgroupament() {
   }
